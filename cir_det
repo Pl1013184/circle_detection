@@ -1,0 +1,26 @@
+import numpy as np
+import cv2 as cv
+
+img_location = 'IMG_1477.jpg'
+#GET IMAGE FROM SOURCE< AND PRE PROCESS
+img = cv.imread(img_location)
+if img is None:
+	print('no img found')
+og= cv.imread(img_location)
+img = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
+img = cv.blur(img,(5,5))
+#FIND CIRCLES
+print('ppdone')
+circles= cv.HoughCircles(img,cv.HOUGH_GRADIENT,1,img.shape[0]/8,param1=100,param2=30,minRadius=0,maxRadius=0)
+#Copied from https://docs.opencv.org/4.x/da/d53/tutorial_py_houghcircles.html
+circles = np.uint16(np.around(circles))
+if circles is None:
+	cv.putText(og,'No CIRCLES FOUND\n(debug values= [param1=3,param2=50,minRadius=0,maxRadius=30])',(og.shape[0]//2,og.shape[1]//2),cv.FONT_HERSHEY_PLAIN,7,(255,0,0),3)
+for i in circles[0,:]:
+    # draw the outer circle
+	cv.circle(og,(i[0],i[1]),i[2],(0,255,0),2)
+    # draw the center of the circle
+	cv.circle(og,(i[0],i[1]),2,(0,0,255),3)
+print('circdone') 
+cv.imshow('detected circles',og)
+cv.waitKey(0)
